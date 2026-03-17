@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../routes/app_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
+import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
 
 class OnBoard2Screen extends StatelessWidget {
@@ -21,8 +23,8 @@ class OnBoard2Screen extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(80),
-                  bottomRight: Radius.circular(80),
+                  bottomLeft: Radius.circular(AppConstants.radiusOnboardTop),
+                  bottomRight: Radius.circular(AppConstants.radiusOnboardTop),
                 ),
               ),
               child: Padding(
@@ -39,7 +41,7 @@ class OnBoard2Screen extends StatelessWidget {
               child: Column(
                 children: [
                   const Text(
-                    'Book a Ride Instantly',
+                    AppStrings.ob2Title,
                     style: TextStyle(
                       fontFamily: 'Urbanist',
                       fontSize: 22,
@@ -52,7 +54,7 @@ class OnBoard2Screen extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25),
                     child: Text(
-                      'Get a cab with a tap at your fingertips at the earliest.',
+                      AppStrings.ob2Desc,
                       style: TextStyle(
                         fontFamily: 'Urbanist',
                         fontSize: 14,
@@ -70,11 +72,11 @@ class OnBoard2Screen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(AppImages.greenLightRectangle, width: 12),
+                        Image.asset(AppImages.greenLightRectangle, width: AppConstants.dotInactiveWidth),
                         const SizedBox(width: 10),
-                        Image.asset(AppImages.greenRectangle, width: 40),
+                        Image.asset(AppImages.greenRectangle, width: AppConstants.dotActiveWidth),
                         const SizedBox(width: 10),
-                        Image.asset(AppImages.greenLightRectangle, width: 12),
+                        Image.asset(AppImages.greenLightRectangle, width: AppConstants.dotInactiveWidth),
                       ],
                     ),
                   ),
@@ -83,20 +85,20 @@ class OnBoard2Screen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CustomAppButton(
-                          title: 'Skip',
+                          title: AppStrings.btnSkip,
                           color: AppColors.lightGreen,
                           textColor: AppColors.primary,
-                          borderRadius: 50,
-                          buttonHeight: 40,
+                          borderRadius: AppConstants.radiusPill,
+                          buttonHeight: AppConstants.buttonHeight,
                           onPressed: () => context.go(AppRoutes.login),
                         ),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: CustomAppButton(
-                          title: 'Continue',
-                          borderRadius: 50,
-                          buttonHeight: 40,
+                          title: AppStrings.btnContinue,
+                          borderRadius: AppConstants.radiusPill,
+                          buttonHeight: AppConstants.buttonHeight,
                           onPressed: () => context.go(AppRoutes.onboard3),
                         ),
                       ),

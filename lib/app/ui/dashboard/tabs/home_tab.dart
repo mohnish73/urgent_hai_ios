@@ -5,7 +5,9 @@ import '../../../core/services/location_service.dart';
 import '../../../core/storage/hive_service.dart';
 import '../../../routes/app_router.dart';
 import '../../../theme/app_colors.dart';
+import '../../../theme/app_constants.dart';
 import '../../../theme/app_images.dart';
+import '../../../theme/app_strings.dart';
 
 // ── Slider data ──────────────────────────────────────────────
 class _SlideItem {
@@ -15,10 +17,10 @@ class _SlideItem {
 }
 
 const _slides = [
-  _SlideItem(AppImages.slider1, 'Urgent Hai: Fast Rides'),
-  _SlideItem(AppImages.slider2, 'Groceries, Meals, Trusted Partners'),
-  _SlideItem(AppImages.slider3, 'UrgentHai Selects, You Save'),
-  _SlideItem(AppImages.slider4, 'Seamless Logistics, Faster Delivery'),
+  _SlideItem(AppImages.slider1, AppStrings.slide1Caption),
+  _SlideItem(AppImages.slider2, AppStrings.slide2Caption),
+  _SlideItem(AppImages.slider3, AppStrings.slide3Caption),
+  _SlideItem(AppImages.slider4, AppStrings.slide4Caption),
 ];
 
 // ── HomeTab ──────────────────────────────────────────────────
@@ -31,7 +33,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   String _locCity = '';
-  String _locCountry = 'India';
+  String _locCountry = AppStrings.defaultCountry;
   int _currentSlide = 0;
   final CarouselSliderController _carouselController =
       CarouselSliderController();
@@ -122,7 +124,7 @@ class _HomeTabState extends State<HomeTab> {
 
                     // ── Welcome note ──────────────────────
                     const Text(
-                      'Your go to partner for all you need \n quickly be it a ride or a grocery!',
+                      AppStrings.homeWelcomeNote,
                       style: TextStyle(
                         fontFamily: 'Urbanist',
                         fontSize: 14,
@@ -138,12 +140,12 @@ class _HomeTabState extends State<HomeTab> {
                         CarouselSlider(
                           carouselController: _carouselController,
                           options: CarouselOptions(
-                            height: 220,
+                            height: AppConstants.carouselHeight,
                             autoPlay: true,
-                            autoPlayInterval:
-                                const Duration(milliseconds: 1800),
-                            autoPlayAnimationDuration:
-                                const Duration(milliseconds: 400),
+                            autoPlayInterval: const Duration(
+                                milliseconds: AppConstants.carouselAutoPlayMs),
+                            autoPlayAnimationDuration: const Duration(
+                                milliseconds: AppConstants.carouselAnimationMs),
                             enlargeCenterPage: false,
                             viewportFraction: 1.0,
                             onPageChanged: (index, _) =>
@@ -194,8 +196,8 @@ class _HomeTabState extends State<HomeTab> {
                       children: [
                         Expanded(
                           child: _ServiceCard(
-                            title: 'Ride',
-                            subtitle: 'Get a ride',
+                            title: AppStrings.serviceRide,
+                            subtitle: AppStrings.serviceRideDesc,
                             image: AppImages.dashboard1,
                             onTap: () =>
                                 context.push(AppRoutes.rideDashboard),
@@ -204,8 +206,8 @@ class _HomeTabState extends State<HomeTab> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _ServiceCard(
-                            title: 'Parcel',
-                            subtitle: 'Send a Parcel',
+                            title: AppStrings.serviceParcel,
+                            subtitle: AppStrings.serviceParcelDesc,
                             image: AppImages.dashboard2,
                             onTap: () =>
                                 context.push(AppRoutes.parcelDashboard),
@@ -220,8 +222,8 @@ class _HomeTabState extends State<HomeTab> {
                       children: [
                         Expanded(
                           child: _ServiceCard(
-                            title: 'Store',
-                            subtitle: 'Grocery, cafe\nand more.',
+                            title: AppStrings.serviceStore,
+                            subtitle: AppStrings.serviceStoreDesc,
                             image: AppImages.dashboard3,
                             onTap: () =>
                                 context.push(AppRoutes.storeDashboard),
@@ -235,7 +237,7 @@ class _HomeTabState extends State<HomeTab> {
                     // ── Footer ────────────────────────────
                     const SizedBox(height: 20),
                     const Text(
-                      'UrgentHai',
+                      AppStrings.homeFooterTitle,
                       style: TextStyle(
                         fontFamily: 'Urbanist',
                         fontSize: 26,
@@ -244,7 +246,7 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
                     const Text(
-                      'Eat. Ride. Deliver.One App Away.',
+                      AppStrings.homeFooterTagline,
                       style: TextStyle(
                         fontFamily: 'Urbanist',
                         fontSize: 22,
@@ -333,7 +335,7 @@ class _ServiceCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 120,
+        height: AppConstants.serviceCardHeight,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -379,7 +381,9 @@ class _ServiceCard extends StatelessWidget {
               bottom: 0,
               right: 0,
               child: Image.asset(image,
-                  width: 100, height: 80, fit: BoxFit.contain),
+                  width: AppConstants.serviceCardImageW,
+                  height: AppConstants.serviceCardImageH,
+                  fit: BoxFit.contain),
             ),
           ],
         ),

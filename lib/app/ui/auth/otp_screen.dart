@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import '../../provider/auth_provider.dart';
 import '../../routes/app_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
+import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -22,7 +24,7 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final _otpController = TextEditingController();
   late String _currentId;
-  int _resendSeconds = 60;
+  int _resendSeconds = AppConstants.otpResendSeconds;
   bool _canResend = false;
   Timer? _timer;
 
@@ -34,7 +36,7 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   void _startTimer() {
-    _resendSeconds = 60;
+    _resendSeconds = AppConstants.otpResendSeconds;
     _canResend = false;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -59,8 +61,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Future<void> _onLogin() async {
     final otp = _otpController.text.trim();
-    if (otp.length != 6) {
-      _showSnack('Enter valid otp');
+    if (otp.length != AppConstants.otpLength) {
+      _showSnack(AppStrings.errorOtpInvalid);
       return;
     }
     final provider = context.read<AuthProvider>();
@@ -113,7 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
       ),
       decoration: BoxDecoration(
         color: AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(AppConstants.radiusField),
         border: Border.all(color: AppColors.gray, width: 0.3),
       ),
     );
@@ -126,10 +128,14 @@ class _OtpScreenState extends State<OtpScreen> {
           children: [
             // ── Back button ────────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.paddingScreen,
+                  vertical: AppConstants.paddingScreen),
               child: GestureDetector(
                 onTap: () => context.pop(),
-                child: Image.asset(AppImages.back, width: 32, height: 32),
+                child: Image.asset(AppImages.back,
+                    width: AppConstants.backBtnSize,
+                    height: AppConstants.backBtnSize),
               ),
             ),
 
@@ -138,16 +144,22 @@ class _OtpScreenState extends State<OtpScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: ClipOval(
-                  child: Image.asset(AppImages.logo, width: 80, height: 80, fit: BoxFit.cover),
+                  child: Image.asset(AppImages.logo,
+                      width: AppConstants.logoSizeSmall,
+                      height: AppConstants.logoSizeSmall,
+                      fit: BoxFit.cover),
                 ),
               ),
             ),
 
             // ── Title ──────────────────────────────────────
             const Padding(
-              padding: EdgeInsets.only(top: 15, left: 15, right: 15),
+              padding: EdgeInsets.only(
+                  top: 15,
+                  left: AppConstants.paddingScreen,
+                  right: AppConstants.paddingScreen),
               child: Text(
-                'OTP',
+                AppStrings.otpTitle,
                 style: TextStyle(
                   fontFamily: 'Urbanist',
                   fontSize: 18,
@@ -163,7 +175,7 @@ class _OtpScreenState extends State<OtpScreen> {
               child: Center(
                 child: Pinput(
                   controller: _otpController,
-                  length: 6,
+                  length: AppConstants.otpLength,
                   defaultPinTheme: pinTheme,
                   focusedPinTheme: pinTheme.copyWith(
                     decoration: pinTheme.decoration!.copyWith(
@@ -179,11 +191,14 @@ class _OtpScreenState extends State<OtpScreen> {
 
             // ── Login button ───────────────────────────────
             Padding(
-              padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+              padding: const EdgeInsets.only(
+                  top: 30,
+                  left: AppConstants.paddingButton,
+                  right: AppConstants.paddingButton),
               child: Consumer<AuthProvider>(
                 builder: (_, auth, __) => CustomAppButton(
-                  title: 'Login',
-                  borderRadius: 50,
+                  title: AppStrings.otpLogin,
+                  borderRadius: AppConstants.radiusPill,
                   isLoading: auth.isLoading,
                   onPressed: auth.isLoading ? null : _onLogin,
                 ),
@@ -198,7 +213,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 children: [
                   Text(
                     _canResend
-                        ? 'You can resend the code'
+                        ? AppStrings.otpResendAvailable
                         : 'You can resend the code in  ${_resendSeconds}s',
                     style: const TextStyle(
                       fontFamily: 'Urbanist',
@@ -215,10 +230,13 @@ class _OtpScreenState extends State<OtpScreen> {
             if (_canResend)
               Consumer<AuthProvider>(
                 builder: (_, auth, __) => Padding(
-                  padding: const EdgeInsets.only(top: 15, left: 30, right: 30),
+                  padding: const EdgeInsets.only(
+                      top: 15,
+                      left: AppConstants.paddingButton,
+                      right: AppConstants.paddingButton),
                   child: CustomAppButton(
-                    title: 'Resend Code',
-                    borderRadius: 50,
+                    title: AppStrings.otpResendCode,
+                    borderRadius: AppConstants.radiusPill,
                     color: AppColors.lightGreen,
                     textColor: AppColors.primary,
                     isLoading: auth.isLoading,

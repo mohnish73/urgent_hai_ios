@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import '../../provider/auth_provider.dart';
 import '../../routes/app_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
+import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,11 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _onContinue() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
-      _showSnack('Mobile number is required');
+      _showSnack(AppStrings.errorPhoneRequired);
       return;
     }
-    if (phone.length != 10) {
-      _showSnack('Enter valid mobile number');
+    if (phone.length != AppConstants.phoneLengthRequired) {
+      _showSnack(AppStrings.errorPhoneInvalid);
       return;
     }
     final provider = context.read<AuthProvider>();
@@ -67,10 +69,14 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             // ── Back button ──────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.paddingScreen,
+                  vertical: AppConstants.paddingScreen),
               child: GestureDetector(
                 onTap: () => context.pop(),
-                child: Image.asset(AppImages.back, width: 32, height: 32),
+                child: Image.asset(AppImages.back,
+                    width: AppConstants.backBtnSize,
+                    height: AppConstants.backBtnSize),
               ),
             ),
 
@@ -79,16 +85,19 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: ClipOval(
-                  child: Image.asset(AppImages.logo, width: 120, height: 120, fit: BoxFit.cover),
+                  child: Image.asset(AppImages.logo,
+                      width: AppConstants.logoSizeAuth,
+                      height: AppConstants.logoSizeAuth,
+                      fit: BoxFit.cover),
                 ),
               ),
             ),
 
             // ── Title ────────────────────────────────────
             const Padding(
-              padding: EdgeInsets.only(top: 15, left: 15, right: 15),
+              padding: EdgeInsets.only(top: 15, left: AppConstants.paddingScreen, right: AppConstants.paddingScreen),
               child: Text(
-                'Welcome back! Glad\n to see you, Again!',
+                AppStrings.loginTitle,
                 style: TextStyle(
                   fontFamily: 'Urbanist',
                   fontSize: 18,
@@ -100,13 +109,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
             // ── Phone field ──────────────────────────────
             Padding(
-              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+              padding: const EdgeInsets.only(
+                  top: 30,
+                  left: AppConstants.paddingButton,
+                  right: AppConstants.paddingButton),
               child: Container(
-                height: 60,
+                height: AppConstants.fieldHeight,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   color: AppColors.lightGrey,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusField),
                   border: Border.all(color: AppColors.gray, width: 0.3),
                 ),
                 child: Row(
@@ -116,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextField(
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
-                        maxLength: 10,
+                        maxLength: AppConstants.phoneLengthMax,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         style: const TextStyle(
                           fontFamily: 'Urbanist',
@@ -125,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: AppColors.black,
                         ),
                         decoration: const InputDecoration(
-                          hintText: 'Enter your Mobile No.',
+                          hintText: AppStrings.loginPhoneHint,
                           hintStyle: TextStyle(fontFamily: 'Urbanist', color: AppColors.gray),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
@@ -142,11 +154,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
             // ── Continue button ──────────────────────────
             Padding(
-              padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+              padding: const EdgeInsets.only(
+                  top: 30,
+                  left: AppConstants.paddingButton,
+                  right: AppConstants.paddingButton),
               child: Consumer<AuthProvider>(
                 builder: (_, auth, __) => CustomAppButton(
-                  title: 'Continue',
-                  borderRadius: 50,
+                  title: AppStrings.loginContinue,
+                  borderRadius: AppConstants.radiusPill,
                   isLoading: auth.isLoading,
                   onPressed: auth.isLoading ? null : _onContinue,
                 ),
@@ -160,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Don't have an account?",
+                    AppStrings.loginNoAccount,
                     style: TextStyle(
                       fontFamily: 'Urbanist',
                       fontSize: 13,
@@ -171,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () => context.push(AppRoutes.signup),
                     child: const Text(
-                      ' Register Now',
+                      AppStrings.loginRegisterNow,
                       style: TextStyle(
                         fontFamily: 'Urbanist',
                         fontSize: 13,

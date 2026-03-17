@@ -1,5 +1,6 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../theme/app_strings.dart';
 
 class LocationResult {
   final String city;
@@ -43,13 +44,13 @@ class LocationService {
       final p = placemarks[0];
       final subLocality = p.subLocality ?? '';
       final adminArea = p.administrativeArea ?? '';
-      final country = p.country ?? 'India';
+      final country = p.country ?? AppStrings.defaultCountry;
 
       final city = subLocality.isNotEmpty && adminArea.isNotEmpty
           ? '$subLocality, $adminArea'
           : adminArea.isNotEmpty
               ? adminArea
-              : 'Address not found';
+              : AppStrings.locationNotFound;
 
       return LocationResult(city: city, country: country);
     } catch (_) {

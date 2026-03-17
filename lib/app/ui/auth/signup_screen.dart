@@ -6,7 +6,9 @@ import '../../model/auth/signup_model.dart';
 import '../../provider/auth_provider.dart';
 import '../../routes/app_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
+import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -37,19 +39,19 @@ class _SignupScreenState extends State<SignupScreen> {
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
 
-    if (fname.isEmpty) { _showSnack('First name is required'); return; }
-    if (lname.isEmpty) { _showSnack('Last name is required'); return; }
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) { _showSnack('Email is required'); return; }
-    if (phone.isEmpty) { _showSnack('Mobile number is required'); return; }
-    if (!RegExp(r'^\d{10}$').hasMatch(phone)) { _showSnack('Enter a valid mobile number'); return; }
+    if (fname.isEmpty) { _showSnack(AppStrings.errorFirstNameRequired); return; }
+    if (lname.isEmpty) { _showSnack(AppStrings.errorLastNameRequired); return; }
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) { _showSnack(AppStrings.errorEmailRequired); return; }
+    if (phone.isEmpty) { _showSnack(AppStrings.errorMobileRequired); return; }
+    if (!RegExp(r'^\d{10}$').hasMatch(phone)) { _showSnack(AppStrings.errorMobileInvalid); return; }
 
     final request = SignUpRequestModel(
       firstName: fname,
       lastName: lname,
       mobileNo: phone,
       email: email,
-      dateOfBirth: '2025-01-01',
-      gender: 'Male',
+      dateOfBirth: AppConstants.defaultDateOfBirth,
+      gender: AppConstants.defaultGender,
     );
 
     final provider = context.read<AuthProvider>();
@@ -81,11 +83,11 @@ class _SignupScreenState extends State<SignupScreen> {
     List<TextInputFormatter>? formatters,
   }) {
     return Container(
-      height: 60,
+      height: AppConstants.fieldHeight,
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(AppConstants.radiusField),
         border: Border.all(color: AppColors.gray, width: 0.3),
       ),
       child: TextField(
@@ -123,18 +125,25 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               // ── Back button ────────────────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppConstants.paddingScreen,
+                    vertical: AppConstants.paddingScreen),
                 child: GestureDetector(
                   onTap: () => context.pop(),
-                  child: Image.asset(AppImages.back, width: 35, height: 35),
+                  child: Image.asset(AppImages.back,
+                      width: AppConstants.backBtnSizeLg,
+                      height: AppConstants.backBtnSizeLg),
                 ),
               ),
 
               // ── Title ──────────────────────────────────────
               const Padding(
-                padding: EdgeInsets.only(top: 15, left: 15, right: 15),
+                padding: EdgeInsets.only(
+                    top: 15,
+                    left: AppConstants.paddingScreen,
+                    right: AppConstants.paddingScreen),
                 child: Text(
-                  'Hello! Register to get\nstarted',
+                  AppStrings.signupTitle,
                   style: TextStyle(
                     fontFamily: 'Urbanist',
                     fontSize: 18,
@@ -146,17 +155,29 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // ── Form fields ────────────────────────────────
               Padding(
-                padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+                padding: const EdgeInsets.only(
+                    top: 30,
+                    left: AppConstants.paddingButton,
+                    right: AppConstants.paddingButton),
                 child: Column(
                   children: [
-                    _buildField(controller: _firstNameController, hint: 'Enter your first name', maxLength: 50),
-                    _buildField(controller: _lastNameController, hint: 'Enter your last name', maxLength: 50),
-                    _buildField(controller: _emailController, hint: 'Enter your email', keyboardType: TextInputType.emailAddress),
+                    _buildField(
+                        controller: _firstNameController,
+                        hint: AppStrings.signupFirstNameHint,
+                        maxLength: AppConstants.nameMaxLength),
+                    _buildField(
+                        controller: _lastNameController,
+                        hint: AppStrings.signupLastNameHint,
+                        maxLength: AppConstants.nameMaxLength),
+                    _buildField(
+                        controller: _emailController,
+                        hint: AppStrings.signupEmailHint,
+                        keyboardType: TextInputType.emailAddress),
                     _buildField(
                       controller: _phoneController,
-                      hint: 'Enter your Mobile No.',
+                      hint: AppStrings.signupPhoneHint,
                       keyboardType: TextInputType.phone,
-                      maxLength: 10,
+                      maxLength: AppConstants.phoneLengthMax,
                       formatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ],
@@ -165,11 +186,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // ── Continue button ────────────────────────────
               Padding(
-                padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+                padding: const EdgeInsets.only(
+                    top: 30,
+                    left: AppConstants.paddingButton,
+                    right: AppConstants.paddingButton),
                 child: Consumer<AuthProvider>(
                   builder: (_, auth, __) => CustomAppButton(
-                    title: 'Continue',
-                    borderRadius: 50,
+                    title: AppStrings.signupContinue,
+                    borderRadius: AppConstants.radiusPill,
                     isLoading: auth.isLoading,
                     onPressed: auth.isLoading ? null : _onContinue,
                   ),
@@ -183,14 +207,22 @@ class _SignupScreenState extends State<SignupScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      'Already have an account?',
-                      style: TextStyle(fontFamily: 'Urbanist', fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.black),
+                      AppStrings.signupHaveAccount,
+                      style: TextStyle(
+                          fontFamily: 'Urbanist',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.black),
                     ),
                     GestureDetector(
                       onTap: () => context.pop(),
                       child: const Text(
-                        ' Login Now',
-                        style: TextStyle(fontFamily: 'Urbanist', fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.primary),
+                        AppStrings.signupLoginNow,
+                        style: TextStyle(
+                            fontFamily: 'Urbanist',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary),
                       ),
                     ),
                   ],

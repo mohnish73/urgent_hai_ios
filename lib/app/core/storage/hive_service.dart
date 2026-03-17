@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../config/app_config.dart';
 import '../../model/auth/login_response_model.dart';
+import '../../theme/app_constants.dart';
 
 class HiveService {
   static Box _getBox() {
@@ -16,51 +17,52 @@ class HiveService {
   // ─── User Data ───────────────────────────────────────
   static Future<void> saveUserData(UserData user) async {
     final box = _getBox();
-    await box.put('userId', user.pkUserId.toString());
-    await box.put('firstName', user.firstName);
-    await box.put('lastName', user.lastName);
-    await box.put('mobileNo', user.mobileNo);
-    await box.put('email', user.emailId ?? '');
-    await box.put('gender', user.gender);
-    await box.put('dateOfBirth', user.dateOfBirth);
-    await box.put('profilePic', user.profilePic ?? '');
-    await box.put('generalNotification', user.generalNotification);
-    await box.put('orderNotification', user.orderNotification);
-    await box.put('emailNotification', user.emailNotification);
+    await box.put(AppConstants.keyUserId, user.pkUserId.toString());
+    await box.put(AppConstants.keyFirstName, user.firstName);
+    await box.put(AppConstants.keyLastName, user.lastName);
+    await box.put(AppConstants.keyMobileNo, user.mobileNo);
+    await box.put(AppConstants.keyEmail, user.emailId ?? '');
+    await box.put(AppConstants.keyGender, user.gender);
+    await box.put(AppConstants.keyDateOfBirth, user.dateOfBirth);
+    await box.put(AppConstants.keyProfilePic, user.profilePic ?? '');
+    await box.put(AppConstants.keyGeneralNotification, user.generalNotification);
+    await box.put(AppConstants.keyOrderNotification, user.orderNotification);
+    await box.put(AppConstants.keyEmailNotification, user.emailNotification);
   }
 
-  static String? getUserId() => _getBox().get('userId');
+  static String? getUserId() => _getBox().get(AppConstants.keyUserId);
+
   static String getFullName() {
-    final first = _getBox().get('firstName', defaultValue: '') as String;
-    final last = _getBox().get('lastName', defaultValue: '') as String;
+    final first = _getBox().get(AppConstants.keyFirstName, defaultValue: '') as String;
+    final last = _getBox().get(AppConstants.keyLastName, defaultValue: '') as String;
     return '$first $last'.trim();
   }
 
-  static String? getFirstName() => _getBox().get('firstName');
-  static String? getLastName() => _getBox().get('lastName');
-  static String? getMobileNo() => _getBox().get('mobileNo');
-  static String? getEmail() => _getBox().get('email');
-  static String? getGender() => _getBox().get('gender');
-  static String? getDateOfBirth() => _getBox().get('dateOfBirth');
-  static String? getProfilePic() => _getBox().get('profilePic');
+  static String? getFirstName() => _getBox().get(AppConstants.keyFirstName);
+  static String? getLastName() => _getBox().get(AppConstants.keyLastName);
+  static String? getMobileNo() => _getBox().get(AppConstants.keyMobileNo);
+  static String? getEmail() => _getBox().get(AppConstants.keyEmail);
+  static String? getGender() => _getBox().get(AppConstants.keyGender);
+  static String? getDateOfBirth() => _getBox().get(AppConstants.keyDateOfBirth);
+  static String? getProfilePic() => _getBox().get(AppConstants.keyProfilePic);
+
   static bool getGeneralNotification() =>
-      _getBox().get('generalNotification', defaultValue: true) as bool;
+      _getBox().get(AppConstants.keyGeneralNotification, defaultValue: true) as bool;
   static bool getOrderNotification() =>
-      _getBox().get('orderNotification', defaultValue: true) as bool;
+      _getBox().get(AppConstants.keyOrderNotification, defaultValue: true) as bool;
   static bool getEmailNotification() =>
-      _getBox().get('emailNotification', defaultValue: false) as bool;
+      _getBox().get(AppConstants.keyEmailNotification, defaultValue: false) as bool;
 
   // ─── Onboarding ──────────────────────────────────────
   static bool getOnboardingDone() =>
-      _getBox().get('onboardingDone', defaultValue: false) as bool;
+      _getBox().get(AppConstants.keyOnboardingDone, defaultValue: false) as bool;
   static Future<void> setOnboardingDone() =>
-      _getBox().put('onboardingDone', true);
+      _getBox().put(AppConstants.keyOnboardingDone, true);
 
   // ─── Logout ──────────────────────────────────────────
   static Future<void> clearAll() async {
     final onboardingDone = getOnboardingDone();
     await _getBox().clear();
-    // preserve onboarding flag so user doesn't see onboarding again
-    await _getBox().put('onboardingDone', onboardingDone);
+    await _getBox().put(AppConstants.keyOnboardingDone, onboardingDone);
   }
 }

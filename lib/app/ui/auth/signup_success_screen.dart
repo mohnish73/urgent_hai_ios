@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import '../../provider/auth_provider.dart';
 import '../../routes/app_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
+import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
 
 class SignupSuccessScreen extends StatefulWidget {
@@ -55,7 +57,9 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: GestureDetector(
                     onTap: () => context.pop(),
-                    child: Image.asset(AppImages.back, width: 35, height: 35),
+                    child: Image.asset(AppImages.back,
+                        width: AppConstants.backBtnSizeLg,
+                        height: AppConstants.backBtnSizeLg),
                   ),
                 ),
 
@@ -63,7 +67,7 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
                 const Padding(
                   padding: EdgeInsets.only(top: 15, left: 20, right: 20),
                   child: Text(
-                    'All Done',
+                    AppStrings.signupSuccessTitle,
                     style: TextStyle(
                       fontFamily: 'Urbanist',
                       fontSize: 22,
@@ -83,7 +87,7 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
-                            "Thanks for giving us your precious time. Now you are ready to explore the world of Urgent Hai's",
+                            AppStrings.signupSuccessDesc,
                             style: TextStyle(
                               fontFamily: 'Urbanist',
                               fontSize: 15,
@@ -93,7 +97,9 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
                           ),
                         ),
                       ),
-                      Image.asset(AppImages.verified, width: 50, height: 50),
+                      Image.asset(AppImages.verified,
+                          width: AppConstants.verifiedIconSize,
+                          height: AppConstants.verifiedIconSize),
                     ],
                   ),
                 ),
@@ -104,7 +110,7 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
                   child: Image.asset(
                     AppImages.successfulPurchase,
                     width: double.infinity,
-                    height: 320,
+                    height: AppConstants.successImageHeight,
                     fit: BoxFit.fitWidth,
                   ),
                 ),
@@ -118,8 +124,8 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
               right: 20,
               child: Consumer<AuthProvider>(
                 builder: (_, auth, __) => CustomAppButton(
-                  title: "Let's Go",
-                  borderRadius: 50,
+                  title: AppStrings.signupSuccessBtn,
+                  borderRadius: AppConstants.radiusPill,
                   isLoading: auth.isLoading,
                   onPressed: auth.isLoading
                       ? null
