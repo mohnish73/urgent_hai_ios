@@ -9,6 +9,7 @@ import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
 import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
+import '../../utils/widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -113,42 +114,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   top: 30,
                   left: AppConstants.paddingButton,
                   right: AppConstants.paddingButton),
-              child: Container(
+              child: CustomTextField(
+                controller: _phoneController,
+                hintText: AppStrings.loginPhoneHint,
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.done,
+                maxLength: AppConstants.phoneLengthMax,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 height: AppConstants.fieldHeight,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.lightGrey,
-                  borderRadius: BorderRadius.circular(AppConstants.radiusField),
-                  border: Border.all(color: AppColors.gray, width: 0.3),
-                ),
-                child: Row(
-                  children: [
-                    Image.asset(AppImages.flag, width: 32),
-                    Expanded(
-                      child: TextField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        maxLength: AppConstants.phoneLengthMax,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black,
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: AppStrings.loginPhoneHint,
-                          hintStyle: TextStyle(fontFamily: 'Urbanist', color: AppColors.gray),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          counterText: '',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                prefixIcon: Image.asset(AppImages.flag, width: 28, height: 28),
+                onSubmitted: (_) => _onContinue(),
               ),
             ),
 

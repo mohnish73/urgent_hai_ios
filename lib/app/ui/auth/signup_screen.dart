@@ -10,6 +10,7 @@ import '../../theme/app_constants.dart';
 import '../../theme/app_images.dart';
 import '../../theme/app_strings.dart';
 import '../../utils/custom_app_button.dart';
+import '../../utils/widgets/custom_text_field.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -79,37 +80,20 @@ class _SignupScreenState extends State<SignupScreen> {
     required TextEditingController controller,
     required String hint,
     TextInputType keyboardType = TextInputType.text,
+    TextInputAction textInputAction = TextInputAction.next,
     int maxLength = 200,
     List<TextInputFormatter>? formatters,
   }) {
-    return Container(
-      height: AppConstants.fieldHeight,
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(AppConstants.radiusField),
-        border: Border.all(color: AppColors.gray, width: 0.3),
-      ),
-      child: TextField(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: CustomTextField(
         controller: controller,
+        hintText: hint,
         keyboardType: keyboardType,
+        textInputAction: textInputAction,
         maxLength: maxLength,
         inputFormatters: formatters,
-        style: const TextStyle(
-          fontFamily: 'Urbanist',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: AppColors.black,
-        ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(fontFamily: 'Urbanist', color: AppColors.gray),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          counterText: '',
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-        ),
+        height: AppConstants.fieldHeight,
       ),
     );
   }
@@ -177,6 +161,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       controller: _phoneController,
                       hint: AppStrings.signupPhoneHint,
                       keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.done,
                       maxLength: AppConstants.phoneLengthMax,
                       formatters: [FilteringTextInputFormatter.digitsOnly],
                     ),

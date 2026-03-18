@@ -54,6 +54,10 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    await _loadLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     final firstName = HiveService.getFirstName() ?? '';
@@ -97,8 +101,12 @@ class _HomeTabState extends State<HomeTab> {
 
             // ── Scrollable content ───────────────────────
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -258,6 +266,7 @@ class _HomeTabState extends State<HomeTab> {
                 ),
               ),
             ),
+          ),
           ],
         ),
       ),

@@ -15,6 +15,7 @@ import '../ui/auth/signup_success_screen.dart';
 import '../ui/dashboard/dashboard_screen.dart';
 
 // Ride
+import '../model/ride/book_ride_model.dart';
 import '../ui/ride/ride_dashboard_screen.dart';
 import '../ui/ride/ride_destination_screen.dart';
 import '../ui/ride/book_ride_screen.dart';
@@ -135,8 +136,27 @@ class AppRouter {
       // ── Ride ──
       GoRoute(path: AppRoutes.rideDashboard, builder: (_, __) => const RideDashboardScreen()),
       GoRoute(path: AppRoutes.rideDestination, builder: (_, __) => const RideDestinationScreen()),
-      GoRoute(path: AppRoutes.bookRide, builder: (_, __) => const BookRideScreen()),
-      GoRoute(path: AppRoutes.rideDetails, builder: (_, __) => const RideDetailsScreen()),
+      GoRoute(
+        path: AppRoutes.bookRide,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return BookRideScreen(
+            pickup: extra['pickup'] as String? ?? '',
+            drop: extra['drop'] as String? ?? '',
+            pickupLat: (extra['pickupLat'] as num?)?.toDouble() ?? 0.0,
+            pickupLng: (extra['pickupLng'] as num?)?.toDouble() ?? 0.0,
+            dropLat: (extra['dropLat'] as num?)?.toDouble() ?? 0.0,
+            dropLng: (extra['dropLng'] as num?)?.toDouble() ?? 0.0,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.rideDetails,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return RideDetailsScreen(booking: extra['booking'] as BookRideData);
+        },
+      ),
       GoRoute(path: AppRoutes.locateMe, builder: (_, __) => const LocateMeScreen()),
 
       // ── Parcel ──

@@ -5,8 +5,15 @@ import '../../theme/app_strings.dart';
 class LocationResult {
   final String city;
   final String country;
+  final double lat;
+  final double lng;
 
-  const LocationResult({required this.city, required this.country});
+  const LocationResult({
+    required this.city,
+    required this.country,
+    required this.lat,
+    required this.lng,
+  });
 }
 
 class LocationService {
@@ -39,7 +46,9 @@ class LocationService {
       double lat, double lng) async {
     try {
       final placemarks = await placemarkFromCoordinates(lat, lng);
-      if (placemarks.isEmpty) return null;
+      if (placemarks.isEmpty) {
+        return LocationResult(city: '', country: AppStrings.defaultCountry, lat: lat, lng: lng);
+      }
 
       final p = placemarks[0];
       final subLocality = p.subLocality ?? '';
@@ -52,9 +61,9 @@ class LocationService {
               ? adminArea
               : AppStrings.locationNotFound;
 
-      return LocationResult(city: city, country: country);
+      return LocationResult(city: city, country: country, lat: lat, lng: lng);
     } catch (_) {
-      return null;
+      return LocationResult(city: '', country: AppStrings.defaultCountry, lat: lat, lng: lng);
     }
   }
 }
