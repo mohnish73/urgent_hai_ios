@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(find /d/hurgent_hai_ios -maxdepth 3 -type d ! -path */.*)",
-      "Bash(xargs wc:*)"
+      "Bash(xargs wc:*)",
+      "Bash(xargs grep:*)",
+      "Bash(find C:/Users/mohnish.kumar/Downloads/UrgentHaiApp/app/src/main/java -name AddressResponse.kt -o -name AddressList*.kt)"
     ]
   }
 }
