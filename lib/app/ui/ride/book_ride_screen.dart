@@ -9,6 +9,7 @@ import '../../model/ride/book_ride_model.dart';
 import '../../model/ride/ride_type_model.dart';
 import '../../provider/ride_provider.dart';
 import '../../routes/app_router.dart';
+import '../../services/network/response/global_error_handle.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_images.dart';
 
@@ -239,14 +240,13 @@ class _BookRideScreenState extends State<BookRideScreen> {
       _startMessages();
       _startPolling(result.tempRideBookId.toString());
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          provider.bookingState.message ?? 'Booking failed.',
-          style: const TextStyle(fontFamily: 'Urbanist'),
+      GlobalErrorHandler.handle(
+        context,
+        provider.bookingState,
+        onRetry: () => _onContinue(
+          context.read<RideProvider>().rideTypes.data ?? [],
         ),
-        backgroundColor: AppColors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
+      );
     }
   }
 

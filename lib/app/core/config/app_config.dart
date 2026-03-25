@@ -8,5 +8,6 @@ class AppConfig {
   static const String authBox = 'authBox';
 
   // Google Maps
-  static const String googleMapsApiKey = 'AIzaSyB9Rs1CHIIjsx-OYKus-ZjIrRpGdLuOtqw';
+  static const String googleMapsApiKey = 'AIzaSyCavWzIyvP8p7z9Ld36OMqviQi4i3zFcA0';
 }
+

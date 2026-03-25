@@ -119,6 +119,8 @@ class _RideBookTabState extends State<RideBookTab> {
             'components': 'country:in',
           },
         );
+        debugPrint('Places Autocomplete status: ${resp.data['status']}');
+        debugPrint('Places Autocomplete response: ${resp.data}');
         final predictions = (resp.data['predictions'] as List?) ?? [];
         if (mounted) {
           setState(() {
@@ -130,7 +132,9 @@ class _RideBookTabState extends State<RideBookTab> {
                 .toList();
           });
         }
-      } catch (_) {
+      } catch (e, st) {
+        debugPrint('Places Autocomplete ERROR: $e');
+        debugPrint('Stack: $st');
         if (mounted) setState(() => _suggestions = []);
       }
     });
@@ -150,6 +154,8 @@ class _RideBookTabState extends State<RideBookTab> {
           'key': AppConfig.googleMapsApiKey,
         },
       );
+      debugPrint('Place Details status: ${resp.data['status']}');
+      debugPrint('Place Details response: ${resp.data}');
       final loc = resp.data['result']['geometry']['location'];
       final lat = (loc['lat'] as num).toDouble();
       final lng = (loc['lng'] as num).toDouble();
@@ -165,7 +171,9 @@ class _RideBookTabState extends State<RideBookTab> {
           _dropLng = lng;
         }
       });
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('Place Details ERROR: $e');
+      debugPrint('Stack: $st');
       if (_activeFieldIsPickup) {
         _pickupCtrl.text = s.description;
       } else {
@@ -289,7 +297,7 @@ class _RideBookTabState extends State<RideBookTab> {
                                 const SizedBox(width: 5),
                                 Expanded(
                                   child: SizedBox(
-                                    height: 40,
+                                    height: 30,
                                     child: TextField(
                                       controller: _pickupCtrl,
                                       focusNode: _pickupFocus,
@@ -307,6 +315,10 @@ class _RideBookTabState extends State<RideBookTab> {
                                           color: AppColors.gray,
                                         ),
                                         border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        filled: true,
+                                        fillColor: AppColors.white,
                                         contentPadding:
                                             EdgeInsets.symmetric(horizontal: 10),
                                         isDense: true,
@@ -354,6 +366,10 @@ class _RideBookTabState extends State<RideBookTab> {
                                           color: AppColors.gray,
                                         ),
                                         border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        filled: true,
+                                        fillColor: AppColors.white,
                                         contentPadding:
                                             EdgeInsets.symmetric(horizontal: 10),
                                         isDense: true,

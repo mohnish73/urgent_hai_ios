@@ -217,8 +217,8 @@ class _HomeTabState extends State<HomeTab> {
                             title: AppStrings.serviceParcel,
                             subtitle: AppStrings.serviceParcelDesc,
                             image: AppImages.dashboard2,
-                            onTap: () =>
-                                context.push(AppRoutes.parcelDashboard),
+                            // onTap: () => context.push(AppRoutes.parcelDashboard
+                            onTap: () {}
                           ),
                         ),
                       ],
@@ -233,8 +233,9 @@ class _HomeTabState extends State<HomeTab> {
                             title: AppStrings.serviceStore,
                             subtitle: AppStrings.serviceStoreDesc,
                             image: AppImages.dashboard3,
-                            onTap: () =>
-                                context.push(AppRoutes.storeDashboard),
+                            // onTap: () => context.push(AppRoutes.storeDashboard),
+                              onTap: () {}
+
                           ),
                         ),
                         const SizedBox(width: 10),

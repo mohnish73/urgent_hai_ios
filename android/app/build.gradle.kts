@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hurgent.hai.hurgent_hai_ios"
+    namespace = "com.urgent.hai"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.hurgent.hai.hurgent_hai_ios"
+        applicationId = "com.urgent.hai"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

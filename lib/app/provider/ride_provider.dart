@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../core/storage/hive_service.dart';
-import '../model/ride/book_ride_model.dart'; // BookRideData, CheckBookingData
+import '../model/ride/book_ride_model.dart';
 import '../model/ride/ride_history_model.dart';
 import '../model/ride/ride_type_model.dart';
 import '../repo/ride_repo.dart';
-import '../services/network/api_error_mapper.dart';
 import '../services/network/response/api_response.dart';
 
 class RideProvider extends ChangeNotifier {
@@ -34,24 +33,16 @@ class RideProvider extends ChangeNotifier {
   }) async {
     rideTypes = ApiResponse.loading();
     notifyListeners();
-
-    try {
-      final res = await _repo.fetchRideTypes(
-        userId: userId,
-        mobileNo: mobileNo,
-        pickupAddress: pickupAddress,
-        pickupLat: pickupLat,
-        pickupLng: pickupLng,
-        dropAddress: dropAddress,
-        dropLat: dropLat,
-        dropLng: dropLng,
-      );
-      rideTypes = res.result
-          ? ApiResponse.success(res.data)
-          : ApiResponse.error(res.message.isNotEmpty ? res.message : 'Failed to load ride types');
-    } catch (e) {
-      rideTypes = ApiErrorMapper.map(e);
-    }
+    rideTypes = await _repo.fetchRideTypes(
+      userId: userId,
+      mobileNo: mobileNo,
+      pickupAddress: pickupAddress,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
+      dropAddress: dropAddress,
+      dropLat: dropLat,
+      dropLng: dropLng,
+    );
     notifyListeners();
   }
 
@@ -59,70 +50,44 @@ class RideProvider extends ChangeNotifier {
   Future<BookRideData?> bookRide(BookRideRequestModel request) async {
     bookingState = ApiResponse.loading();
     notifyListeners();
-
-    try {
-      final res = await _repo.bookRide(request);
-      if (res.result && res.data != null) {
-        activeBooking = res.data;
-        bookingState = ApiResponse.success(res.data!);
-        notifyListeners();
-        return res.data;
-      } else {
-        bookingState = ApiResponse.error(res.message.isNotEmpty ? res.message : 'Booking failed');
-        notifyListeners();
-        return null;
-      }
-    } catch (e) {
-      bookingState = ApiErrorMapper.map(e);
-      notifyListeners();
-      return null;
-    }
+    bookingState = await _repo.bookRide(request);
+    activeBooking = bookingState.data;
+    notifyListeners();
+    return bookingState.data;
   }
 
   // ─── Check Booking (polls by tempRideBookId) ─────────
   Future<CheckBookingData?> checkBooking(String tempRideBookId) async {
-    try {
-      final res = await _repo.checkBooking(tempRideBookId);
-      return res.data;
-    } catch (_) {
-      return null;
-    }
+    final result = await _repo.checkBooking(tempRideBookId);
+    return result.data;
   }
 
   // ─── Cancel Ride (confirmed booking) ─────────────────
   Future<bool> cancelRide(int riderBook) async {
     final userId = HiveService.getUserId();
     if (userId == null) return false;
-
-    try {
-      final ok = await _repo.cancelRide(userId, riderBook);
-      if (ok) {
-        activeBooking = null;
-        bookingState = ApiResponse.idle();
-        notifyListeners();
-      }
-      return ok;
-    } catch (_) {
-      return false;
+    final result = await _repo.cancelRide(userId, riderBook);
+    if (result.data == true) {
+      activeBooking = null;
+      bookingState = ApiResponse.idle();
+      notifyListeners();
+      return true;
     }
+    return false;
   }
 
   // ─── Cancel Ride (temp / searching) ──────────────────
   Future<bool> cancelRideTemp(String tempRideBookId) async {
     final userId = HiveService.getUserId();
     if (userId == null) return false;
-
-    try {
-      final ok = await _repo.cancelRideTemp(userId, tempRideBookId);
-      if (ok) {
-        activeBooking = null;
-        bookingState = ApiResponse.idle();
-        notifyListeners();
-      }
-      return ok;
-    } catch (_) {
-      return false;
+    final result = await _repo.cancelRideTemp(userId, tempRideBookId);
+    if (result.data == true) {
+      activeBooking = null;
+      bookingState = ApiResponse.idle();
+      notifyListeners();
+      return true;
     }
+    return false;
   }
 
   void resetBooking() {
@@ -135,18 +100,9 @@ class RideProvider extends ChangeNotifier {
   Future<void> fetchRideHistory() async {
     final userId = HiveService.getUserId();
     if (userId == null) return;
-
     rideHistory = ApiResponse.loading();
     notifyListeners();
-
-    try {
-      final res = await _repo.fetchRideHistory(userId);
-      rideHistory = res.result
-          ? ApiResponse.success(res.data)
-          : ApiResponse.error(res.message.isNotEmpty ? res.message : 'Failed to load ride history');
-    } catch (e) {
-      rideHistory = ApiErrorMapper.map(e);
-    }
+    rideHistory = await _repo.fetchRideHistory(userId);
     notifyListeners();
   }
 
@@ -154,18 +110,9 @@ class RideProvider extends ChangeNotifier {
   Future<void> fetchParcelHistory() async {
     final userId = HiveService.getUserId();
     if (userId == null) return;
-
     parcelHistory = ApiResponse.loading();
     notifyListeners();
-
-    try {
-      final res = await _repo.fetchParcelHistory(userId);
-      parcelHistory = res.result
-          ? ApiResponse.success(res.data)
-          : ApiResponse.error(res.message.isNotEmpty ? res.message : 'Failed to load parcel history');
-    } catch (e) {
-      parcelHistory = ApiErrorMapper.map(e);
-    }
+    parcelHistory = await _repo.fetchParcelHistory(userId);
     notifyListeners();
   }
 }

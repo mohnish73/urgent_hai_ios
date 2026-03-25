@@ -2,12 +2,15 @@ import '../core/config/app_config.dart';
 import '../model/ride/book_ride_model.dart';
 import '../model/ride/ride_history_model.dart';
 import '../model/ride/ride_type_model.dart';
+import '../services/network/app_exceptions.dart';
 import '../services/network/network_api_services.dart';
+import '../services/network/response/api_response.dart';
+import '../services/network/response/base_api_handler.dart';
 
 class RideRepo {
   final _api = NetworkApiServices();
 
-  Future<RideTypeResponse> fetchRideTypes({
+  Future<ApiResponse<List<RideTypeData>>> fetchRideTypes({
     required String userId,
     required String mobileNo,
     required String pickupAddress,
@@ -16,77 +19,108 @@ class RideRepo {
     required String dropAddress,
     required double dropLat,
     required double dropLng,
-  }) async {
+  }) {
     final now = DateTime.now();
     final dateTime =
         '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} '
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
 
-    final res = await _api.postApi(
-      {
-        'userID': userId,
-        'mobileNo': mobileNo,
-        'pickupLocation': {
-          'address': pickupAddress,
-          'latitude': pickupLat,
-          'longitude': pickupLng,
+    return ApiHandler.handle(
+      apiCall: () => _api.postApi(
+        {
+          'userID': userId,
+          'mobileNo': mobileNo,
+          'pickupLocation': {
+            'address': pickupAddress,
+            'latitude': pickupLat,
+            'longitude': pickupLng,
+          },
+          'dropoffLocation': {
+            'address': dropAddress,
+            'latitude': dropLat,
+            'longitude': dropLng,
+          },
+          'dateTime': dateTime,
         },
-        'dropoffLocation': {
-          'address': dropAddress,
-          'latitude': dropLat,
-          'longitude': dropLng,
-        },
-        'dateTime': dateTime,
+        '${AppConfig.baseUrl}URGH/GetRideType',
+      ),
+      parser: (json) {
+        final res = RideTypeResponse.fromJson(json as Map<String, dynamic>);
+        if (!res.result) throw AppException(res.message.isNotEmpty ? res.message : 'Failed to load ride types');
+        return res.data;
       },
-      '${AppConfig.baseUrl}URGH/GetRideType',
     );
-    return RideTypeResponse.fromJson(res.data);
   }
 
-  Future<BookRideResponse> bookRide(BookRideRequestModel request) async {
-    final res = await _api.postApiWithToken(
-      request.toJson(),
-      '${AppConfig.baseUrl}URGH/BookingRequestByUser',
+  Future<ApiResponse<BookRideData>> bookRide(BookRideRequestModel request) {
+    return ApiHandler.handle(
+      apiCall: () => _api.postApiWithToken(
+        request.toJson(),
+        '${AppConfig.baseUrl}URGH/BookingRequestByUser',
+      ),
+      parser: (json) {
+        final res = BookRideResponse.fromJson(json as Map<String, dynamic>);
+        if (!res.result || res.data == null) throw AppException(res.message.isNotEmpty ? res.message : 'Booking failed');
+        return res.data!;
+      },
     );
-    return BookRideResponse.fromJson(res.data);
   }
 
-  Future<CheckBookingResponse> checkBooking(String tempRideBookId) async {
-    final res = await _api.getApiWithToken(
-      '${AppConfig.baseUrl}URGH/CheckBooking?TempRideBookId=$tempRideBookId',
+  Future<ApiResponse<CheckBookingData>> checkBooking(String tempRideBookId) {
+    return ApiHandler.handle(
+      apiCall: () => _api.getApiWithToken(
+        '${AppConfig.baseUrl}URGH/CheckBooking?TempRideBookId=$tempRideBookId',
+      ),
+      parser: (json) {
+        final res = CheckBookingResponse.fromJson(json as Map<String, dynamic>);
+        return res.data ?? CheckBookingData(isRideBook: false, bookingId: 0);
+      },
     );
-    return CheckBookingResponse.fromJson(res.data);
   }
 
-  Future<bool> cancelRide(String userId, int riderBook) async {
-    final res = await _api.getApiWithToken(
-      '${AppConfig.baseUrl}URGH/CancelRideByUser?UserID=$userId&RiderBook=$riderBook',
+  Future<ApiResponse<bool>> cancelRide(String userId, int riderBook) {
+    return ApiHandler.handle(
+      apiCall: () => _api.getApiWithToken(
+        '${AppConfig.baseUrl}URGH/CancelRideByUser?UserID=$userId&RiderBook=$riderBook',
+      ),
+      parser: (json) => (json as Map<String, dynamic>)['Result'] as bool? ?? false,
     );
-    final json = res.data as Map<String, dynamic>;
-    return json['Result'] ?? false;
   }
 
-  Future<bool> cancelRideTemp(String userId, String tempRideBookId) async {
-    final res = await _api.getApiWithToken(
-      '${AppConfig.baseUrl}URGH/CancelRideFromTempFromUser?UserID=$userId&TempRideBookId=$tempRideBookId&Status=0',
+  Future<ApiResponse<bool>> cancelRideTemp(String userId, String tempRideBookId) {
+    return ApiHandler.handle(
+      apiCall: () => _api.getApiWithToken(
+        '${AppConfig.baseUrl}URGH/CancelRideFromTempFromUser?UserID=$userId&TempRideBookId=$tempRideBookId&Status=0',
+      ),
+      parser: (json) => (json as Map<String, dynamic>)['Result'] as bool? ?? false,
     );
-    final json = res.data as Map<String, dynamic>;
-    return json['Result'] ?? false;
   }
 
-  Future<RideHistoryResponse> fetchRideHistory(String userId) async {
-    final res = await _api.postApi(
-      {},
-      '${AppConfig.baseUrl}URGH/GetUserRideListByUserId?UserID=$userId',
+  Future<ApiResponse<List<RideHistoryData>>> fetchRideHistory(String userId) {
+    return ApiHandler.handle(
+      apiCall: () => _api.postApi(
+        {},
+        '${AppConfig.baseUrl}URGH/GetUserRideListByUserId?UserID=$userId',
+      ),
+      parser: (json) {
+        final res = RideHistoryResponse.fromJson(json as Map<String, dynamic>);
+        if (!res.result) throw AppException(res.message.isNotEmpty ? res.message : 'Failed to load ride history');
+        return res.data;
+      },
     );
-    return RideHistoryResponse.fromJson(res.data);
   }
 
-  Future<RideHistoryResponse> fetchParcelHistory(String userId) async {
-    final res = await _api.postApi(
-      {},
-      '${AppConfig.baseUrl}URGH/GetUserRideListByUserId?UserID=$userId',
+  Future<ApiResponse<List<RideHistoryData>>> fetchParcelHistory(String userId) {
+    return ApiHandler.handle(
+      apiCall: () => _api.postApi(
+        {},
+        '${AppConfig.baseUrl}URGH/GetUserRideListByUserId?UserID=$userId',
+      ),
+      parser: (json) {
+        final res = RideHistoryResponse.fromJson(json as Map<String, dynamic>);
+        if (!res.result) throw AppException(res.message.isNotEmpty ? res.message : 'Failed to load parcel history');
+        return res.data;
+      },
     );
-    return RideHistoryResponse.fromJson(res.data);
   }
 }

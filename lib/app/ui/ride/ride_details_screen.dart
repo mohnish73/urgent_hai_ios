@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../model/ride/book_ride_model.dart';
 import '../../provider/ride_provider.dart';
+import '../../services/network/response/api_response.dart';
+import '../../services/network/response/global_error_handle.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_images.dart';
 
@@ -27,13 +29,10 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
     if (ok) {
       context.pop();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to cancel ride.',
-              style: TextStyle(fontFamily: 'Urbanist')),
-          backgroundColor: AppColors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
+      GlobalErrorHandler.handle(
+        context,
+        ApiResponse.error('Failed to cancel ride. Please try again.'),
+        onRetry: _onCancel,
       );
     }
   }
