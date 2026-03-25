@@ -79,6 +79,10 @@ class _BookRideScreenState extends State<BookRideScreen> {
   // ── CheckBooking polling ──────────────────────────────────
   Timer? _pollTimer;
 
+  // ── Draggable sheet controller ────────────────────────────
+  final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
+
   LatLng get _mapCenter => widget.pickupLat != 0 && widget.pickupLng != 0
       ? LatLng(widget.pickupLat, widget.pickupLng)
       : const LatLng(20.5937, 78.9629);
@@ -106,6 +110,7 @@ class _BookRideScreenState extends State<BookRideScreen> {
     _messageTimer?.cancel();
     _pollTimer?.cancel();
     _mapController?.dispose();
+    _sheetController.dispose();
     super.dispose();
   }
 
@@ -142,11 +147,10 @@ class _BookRideScreenState extends State<BookRideScreen> {
 
       _animatePolyline(path);
 
-      // Fit camera to show entire route
+      // Fit camera to show top-half map (like Android: visibleMapHeight = screenHeight / 2)
       final bounds = _buildBounds(path);
       _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
     } catch (_) {
-      // Fallback: just show start/end markers without route
       if (mounted && widget.pickupLat != 0) {
         setState(() {
           _markers
@@ -211,7 +215,7 @@ class _BookRideScreenState extends State<BookRideScreen> {
     );
   }
 
-  // ── Start searching: show sheet2, load ride.gif, start messages + poll ──
+  // ── Start searching ──────────────────────────────────────
   Future<void> _onContinue(List<RideTypeData> rides) async {
     final selected = rides[_selectedIndex];
     final provider = context.read<RideProvider>();
@@ -270,7 +274,6 @@ class _BookRideScreenState extends State<BookRideScreen> {
       if (data != null && data.isRideBook) {
         _pollTimer?.cancel();
         _messageTimer?.cancel();
-        // Switch to green_tick GIF for 2.2s then navigate
         setState(() => _driverFound = true);
         await Future.delayed(const Duration(milliseconds: 2200));
         if (!mounted) return;
@@ -296,6 +299,24 @@ class _BookRideScreenState extends State<BookRideScreen> {
     }
   }
 
+  // ── Toggle sheet collapsed ↔ expanded (like Android drag handle click) ──
+  void _toggleSheet() {
+    if (!_sheetController.isAttached) return;
+    if (_sheetController.size < 0.6) {
+      _sheetController.animateTo(
+        0.88,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    } else {
+      _sheetController.animateTo(
+        0.38,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -305,14 +326,12 @@ class _BookRideScreenState extends State<BookRideScreen> {
           GoogleMap(
             onMapCreated: (c) {
               _mapController = c;
-              // Animate to pickup location first
               if (widget.pickupLat != 0 && widget.pickupLng != 0) {
                 c.animateCamera(CameraUpdate.newLatLngZoom(
                   LatLng(widget.pickupLat, widget.pickupLng),
                   14,
                 ));
               }
-              // Draw route if both coordinates are available
               if (widget.pickupLat != 0 && widget.dropLat != 0) {
                 _drawRoute();
               }
@@ -336,147 +355,169 @@ class _BookRideScreenState extends State<BookRideScreen> {
             ),
           ),
 
-          // ── Bottom sheet ──────────────────────────────────
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _isSearching ? _buildSheet2() : _buildSheet1(),
-          ),
+          // ── Sheet 1: Draggable ride options ───────────────
+          if (!_isSearching) _buildDraggableSheet1(),
+
+          // ── Sheet 2: Searching (non-draggable, same as Android) ──
+          if (_isSearching)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _buildSheet2(),
+            ),
         ],
       ),
     );
   }
 
-  // ── Bottom Sheet 1: Ride options ──────────────────────────
-  Widget _buildSheet1() {
-    return Consumer<RideProvider>(
-      builder: (_, provider, __) {
-        final response = provider.rideTypes;
-        return Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            boxShadow: [
-              BoxShadow(color: Color(0x1A000000), blurRadius: 10, offset: Offset(0, -2))
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Drag handle
-              Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 4),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                    color: AppColors.greyBorder,
-                    borderRadius: BorderRadius.circular(2)),
+  // ── Draggable Bottom Sheet 1 (like Android BottomSheetBehavior) ──
+  Widget _buildDraggableSheet1() {
+    return DraggableScrollableSheet(
+      controller: _sheetController,
+      initialChildSize: 0.38,
+      minChildSize: 0.33,
+      maxChildSize: 0.88,
+      snap: true,
+      snapSizes: const [0.38, 0.88],
+      builder: (context, scrollController) {
+        return Consumer<RideProvider>(
+          builder: (_, provider, __) {
+            final response = provider.rideTypes;
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color(0x1A000000),
+                      blurRadius: 10,
+                      offset: Offset(0, -2))
+                ],
               ),
-
-              if (response.isLoading)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 30),
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                )
-              else if (response.isSuccess && response.data != null) ...[
-                // Ride options list (scrollable, ~220dp)
-                SizedBox(
-                  height: 220,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5, vertical: 5),
-                    child: Column(
-                      children: response.data!.asMap().entries.map((e) {
-                        return _RideOptionCard(
-                          ride: e.value,
-                          isSelected: _selectedIndex == e.key,
-                          onTap: () => setState(() => _selectedIndex = e.key),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-
-                // Bottom row: text (weight 2) + Continue pill (weight 1)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        flex: 2,
-                        child: Text(
-                          "You're just one step away from booking.",
-                          style: TextStyle(
-                            fontFamily: 'Urbanist',
-                            fontSize: 9,
-                            color: AppColors.black,
-                          ),
+              child: Column(
+                children: [
+                  // Drag handle — tap to toggle collapsed/expanded
+                  GestureDetector(
+                    onTap: _toggleSheet,
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.greyBorder,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: GestureDetector(
-                          onTap: () => _onContinue(response.data!),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 5),
-                            margin: const EdgeInsets.only(right: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'Continue',
-                              textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  if (response.isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: CircularProgressIndicator(color: AppColors.primary),
+                    )
+                  else if (response.isSuccess && response.data != null) ...[
+                    // Ride options list — uses scrollController for drag propagation
+                    Expanded(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 5),
+                        itemCount: response.data!.length,
+                        itemBuilder: (_, i) => _RideOptionCard(
+                          ride: response.data![i],
+                          isSelected: _selectedIndex == i,
+                          onTap: () => setState(() => _selectedIndex = i),
+                        ),
+                      ),
+                    ),
+
+                    // Bottom row: hint text + Continue pill
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            flex: 2,
+                            child: Text(
+                              "You're just one step away from booking.",
                               style: TextStyle(
                                 fontFamily: 'Urbanist',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.white,
+                                fontSize: 9,
+                                color: AppColors.black,
                               ),
                             ),
                           ),
-                        ),
+                          Expanded(
+                            flex: 1,
+                            child: GestureDetector(
+                              onTap: () => _onContinue(response.data!),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 5),
+                                margin:
+                                    const EdgeInsets.only(right: 10, bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Continue',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Urbanist',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ] else
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-                  child: Column(
-                    children: [
-                      const Text('Failed to load ride types',
-                          style: TextStyle(
-                              fontFamily: 'Urbanist', color: AppColors.gray)),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () => context.read<RideProvider>().fetchRideTypes(
-                          userId: HiveService.getUserId() ?? '',
-                          mobileNo: HiveService.getMobileNo() ?? '',
-                          pickupAddress: widget.pickup,
-                          pickupLat: widget.pickupLat,
-                          pickupLng: widget.pickupLng,
-                          dropAddress: widget.drop,
-                          dropLat: widget.dropLat,
-                          dropLng: widget.dropLng,
-                        ),
-                        child: const Text('Retry',
-                            style: TextStyle(color: AppColors.primary)),
+                    ),
+                  ] else
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 15),
+                      child: Column(
+                        children: [
+                          const Text('Failed to load ride types',
+                              style: TextStyle(
+                                  fontFamily: 'Urbanist',
+                                  color: AppColors.gray)),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: () =>
+                                context.read<RideProvider>().fetchRideTypes(
+                                  userId: HiveService.getUserId() ?? '',
+                                  mobileNo: HiveService.getMobileNo() ?? '',
+                                  pickupAddress: widget.pickup,
+                                  pickupLat: widget.pickupLat,
+                                  pickupLng: widget.pickupLng,
+                                  dropAddress: widget.drop,
+                                  dropLat: widget.dropLat,
+                                  dropLng: widget.dropLng,
+                                ),
+                            child: const Text('Retry',
+                                style: TextStyle(color: AppColors.primary)),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
+                    ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
   }
 
-  // ── Bottom Sheet 2: Searching (320dp) ─────────────────────
-  // ride.gif while searching → green_tick.gif when driver found
+  // ── Bottom Sheet 2: Searching (non-draggable, same as Android) ──
   Widget _buildSheet2() {
     return Container(
       height: 320,
@@ -489,7 +530,7 @@ class _BookRideScreenState extends State<BookRideScreen> {
       ),
       child: Column(
         children: [
-          // Drag handle
+          // Drag handle (visual only — sheet2 is NOT draggable, same as Android)
           Container(
             margin: const EdgeInsets.only(top: 10, bottom: 4),
             width: 40,
@@ -539,8 +580,7 @@ class _BookRideScreenState extends State<BookRideScreen> {
             ),
           ),
 
-          // Cancel button (white bg + black border, margin 30dp horizontal)
-          // Only show while still searching, hide when driver found
+          // Cancel button — hidden when driver found
           if (!_driverFound)
             GestureDetector(
               onTap: _onCancelSearch,
@@ -573,7 +613,7 @@ class _BookRideScreenState extends State<BookRideScreen> {
   }
 }
 
-// ── Ride Option Card (item_ride_option.xml) ───────────────────
+// ── Ride Option Card ──────────────────────────────────────────
 class _RideOptionCard extends StatelessWidget {
   final RideTypeData ride;
   final bool isSelected;
@@ -585,16 +625,44 @@ class _RideOptionCard extends StatelessWidget {
     required this.onTap,
   });
 
-  String _localImage(String name) {
-    switch (name.toLowerCase()) {
+  /// Maps ride type to local asset image.
+  /// First tries API's rideTypeImage filename (e.g. "sedan.jpg" → sedan.png),
+  /// then falls back to rideTypeName matching.
+  String _localImage() {
+    // Strip extension from API image name (e.g. "sedan.jpg" → "sedan")
+    final apiName = ride.rideTypeImage
+        .toLowerCase()
+        .replaceAll(RegExp(r'\.[^.]+$'), '');
+
+    final key = apiName.isNotEmpty ? apiName : ride.rideTypeName.toLowerCase();
+
+    switch (key) {
       case 'bike':
         return AppImages.bike;
       case 'auto':
         return AppImages.auto;
       case 'car':
         return AppImages.car;
+      case 'sedan':
+        return AppImages.car;
+      case 'suv':
+        return AppImages.car;
       default:
-        return AppImages.ride;
+        // Final fallback: try name
+        switch (ride.rideTypeName.toLowerCase()) {
+          case 'bike':
+            return AppImages.bike;
+          case 'auto':
+            return AppImages.auto;
+          case 'car':
+            return AppImages.car;
+          case 'sedan':
+            return AppImages.sedan;
+          case 'suv':
+            return AppImages.suv;
+          default:
+            return AppImages.ride;
+        }
     }
   }
 
@@ -614,7 +682,7 @@ class _RideOptionCard extends StatelessWidget {
               Row(
                 children: [
                   Image.asset(
-                    _localImage(ride.rideTypeName),
+                    _localImage(),
                     width: 40,
                     height: 40,
                     fit: BoxFit.contain,

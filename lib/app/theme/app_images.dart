@@ -46,6 +46,8 @@ class AppImages {
   static const String bike = '${_img}bike.png';
   static const String auto = '${_img}auto.png';
   static const String car = '${_img}car.png';
+  static const String sedan = '${_img}sedan.png';
+  static const String suv = '${_img}suv.png';
 
   // ─── Parcel ───────────────────────────────────────────
   static const String parcel = '${_img}parcel.png';

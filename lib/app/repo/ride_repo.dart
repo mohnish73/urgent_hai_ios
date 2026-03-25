@@ -69,7 +69,8 @@ class RideRepo {
   Future<ApiResponse<CheckBookingData>> checkBooking(String tempRideBookId) {
     return ApiHandler.handle(
       apiCall: () => _api.getApiWithToken(
-        '${AppConfig.baseUrl}URGH/CheckBooking?TempRideBookId=$tempRideBookId',
+        // '${AppConfig.baseUrl}URGH/CheckBooking?tempRideBookId=$tempRideBookId',
+        '${AppConfig.baseUrl}URGH/CheckBooking?tempBookingId=$tempRideBookId',
       ),
       parser: (json) {
         final res = CheckBookingResponse.fromJson(json as Map<String, dynamic>);
