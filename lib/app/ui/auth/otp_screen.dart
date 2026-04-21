@@ -33,13 +33,17 @@ class _OtpScreenState extends State<OtpScreen> {
     super.initState();
     _currentId = widget.id;
     _startTimer();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final otp = context.read<AuthProvider>().otpData?.otpValue ?? '';
+      if (otp.isNotEmpty) _showOtpToast(otp);
+    });
   }
 
   void _startTimer() {
     _resendSeconds = AppConstants.otpResendSeconds;
     _canResend = false;
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(  Duration(seconds: 1), (_) {
       if (!mounted) return;
       setState(() {
         if (_resendSeconds > 0) {
@@ -87,6 +91,8 @@ class _OtpScreenState extends State<OtpScreen> {
     if (success && provider.otpData != null) {
       _currentId = provider.otpData!.id;
       _startTimer();
+      final otp = provider.otpData!.otpValue;
+      if (otp.isNotEmpty) _showOtpToast(otp);
     } else {
       _showSnack(provider.errorMessage);
     }
@@ -98,6 +104,72 @@ class _OtpScreenState extends State<OtpScreen> {
         content: Text(msg, style: const TextStyle(fontFamily: 'Urbanist')),
         backgroundColor: AppColors.red,
         behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showOtpToast(String otp) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 6),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        content: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.sms_outlined, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Your OTP Code',
+                    style: TextStyle(
+                      fontFamily: 'Urbanist',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    otp,
+                    style: const TextStyle(
+                      fontFamily: 'Urbanist',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: 6,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
