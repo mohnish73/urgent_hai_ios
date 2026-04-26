@@ -66,7 +66,7 @@ dev_dependencies:
 
 # 👇 THIS IS YOUR ICON CONFIG
 flutter_launcher_icons:
-  image_path: "assets/images/urgent_hai_logo_small.png"
+  image_path: "assets/images/UrgentHaiAppIcon_large_1024x1024.png"
 
   android: "launcher_icon"
   min_sdk_android: 21
@@ -76,18 +76,18 @@ flutter_launcher_icons:
 
   web:
     generate: true
-    image_path: "assets/images/urgent_hai_logo_small.png"
+    image_path: "assets/images/UrgentHaiAppIcon_large_1024x1024.png"
     background_color: "#ffffff"
     theme_color: "#ffffff"
 
   windows:
     generate: true
-    image_path: "assets/images/urgent_hai_logo_small.png"
+    image_path: "assets/images/UrgentHaiAppIcon_large_1024x1024.png"
     icon_size: 48
 
   macos:
     generate: true
-    image_path: "assets/images/urgent_hai_logo_small.png"
+    image_path: "assets/images/UrgentHaiAppIcon_large_1024x1024.png"
 
 flutter:
   uses-material-design: true
