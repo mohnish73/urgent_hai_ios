@@ -89,12 +89,12 @@ class AppRouter {
 
       if (loc == AppRoutes.splash) return null;
 
-      if (!onboardingDone &&
-          loc != AppRoutes.onboard1 &&
-          loc != AppRoutes.onboard2 &&
-          loc != AppRoutes.onboard3) {
-        return AppRoutes.onboard1;
-      }
+      // if (!onboardingDone &&
+      //     loc != AppRoutes.onboard1 &&
+      //     loc != AppRoutes.onboard2 &&
+      //     loc != AppRoutes.onboard3) {
+      //   return AppRoutes.onboard1;
+      // }
       if (!isLoggedIn && loc == AppRoutes.dashboard) {
         return AppRoutes.login;
       }

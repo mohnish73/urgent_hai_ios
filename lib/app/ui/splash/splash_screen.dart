@@ -30,9 +30,13 @@ class _SplashScreenState extends State<SplashScreen> {
     final onboardingDone = HiveService.getOnboardingDone();
     final isLoggedIn = HiveService.isLoggedIn();
 
-    if (!onboardingDone) {
-      context.go(AppRoutes.onboard1);
-    } else if (!isLoggedIn) {
+    // if (!onboardingDone) {
+    //   // context.go(AppRoutes.onboard1);
+    //  
+    // } else
+    //
+      if (!isLoggedIn) {
+
       context.go(AppRoutes.login);
     } else {
       context.go(AppRoutes.dashboard);
