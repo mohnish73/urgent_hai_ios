@@ -11,49 +11,98 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
-      appBar: AppBar(title: const Text('Profile'), backgroundColor: AppColors.white),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          // ── Avatar + Name ─────────────────────────────────
-          Center(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 44,
-                  backgroundColor: AppColors.lightGreen,
-                  backgroundImage: AssetImage(AppImages.profilePicOutline),
-                ),
-                const SizedBox(height: 12),
-                // Text(
-                //   HiveService.getName() ?? 'User',
-                //   style: const TextStyle(fontFamily: 'Urbanist', fontSize: 20, fontWeight: FontWeight.w700),
-                // ),
-                Text(
-                  HiveService.getMobileNo() ?? '',
-                  style: const TextStyle(fontFamily: 'Urbanist', color: AppColors.gray),
-                ),
-              ],
+      backgroundColor: AppColors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── Profile Picture ────────────────────────────────
+            const SizedBox(height: 40),
+            CircleAvatar(
+              radius: 40,
+              backgroundImage: const AssetImage(AppImages.samplePic),
+              backgroundColor: Colors.transparent,
             ),
-          ),
-          const SizedBox(height: 28),
 
-          // ── Menu Items ─────────────────────────────────────
-          _ProfileMenuItem(icon: AppImages.profile, label: 'About Me', onTap: () => context.push(AppRoutes.aboutMe)),
-          _ProfileMenuItem(icon: AppImages.address, label: 'My Addresses', onTap: () => context.push(AppRoutes.addAddress)),
-          _ProfileMenuItem(icon: AppImages.notification, label: 'Notifications', onTap: () => context.push(AppRoutes.notifications)),
-          const Divider(height: 32),
-          _ProfileMenuItem(
-            icon: AppImages.signout,
-            label: 'Sign Out',
-            labelColor: AppColors.red,
-            onTap: () async {
-              await HiveService.clearAll();
-              if (context.mounted) context.go(AppRoutes.login);
-            },
-          ),
-        ],
+            // ── Name + Email ───────────────────────────────────
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  Text(
+                    HiveService.getFullName().isEmpty ? 'User' : HiveService.getFullName(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: 'Urbanist',
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF3F3F3F),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    HiveService.getMobileNo() ?? '',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: 'Urbanist',
+                      fontSize: 12,
+                      color: AppColors.gray,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Menu Items ─────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _ProfileMenuItem(
+                    icon: AppImages.profileOutline,
+                    label: 'About Me',
+                    onTap: () => context.push(AppRoutes.aboutMe),
+                  ),
+                  _ProfileMenuItem(
+                    icon: AppImages.parcel,
+                    label: 'Ticket',
+                    onTap: () {},
+                  ),
+                  _ProfileMenuItem(
+                    icon: AppImages.notification,
+                    label: 'Notifications',
+                    onTap: () => context.push(AppRoutes.notifications),
+                  ),
+                  _ProfileMenuItem(
+                    icon: AppImages.signout,
+                    label: 'Sign Out',
+                    showArrow: false,
+                    onTap: () async {
+                      await HiveService.clearAll();
+                      if (context.mounted) context.go(AppRoutes.login);},
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // ── Version ────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'v1.4',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'Urbanist',
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF3F3F3F),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -63,23 +112,44 @@ class _ProfileMenuItem extends StatelessWidget {
   final String icon;
   final String label;
   final VoidCallback onTap;
-  final Color labelColor;
+  final bool showArrow;
 
   const _ProfileMenuItem({
     required this.icon,
     required this.label,
     required this.onTap,
-    this.labelColor = AppColors.textPrimary,
+    this.showArrow = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Image.asset(icon, width: 24, height: 24),
-      title: Text(label, style: TextStyle(fontFamily: 'Urbanist', fontWeight: FontWeight.w500, color: labelColor)),
-      trailing: Image.asset(AppImages.rightArrow, width: 18, height: 18),
+    return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(icon, width: 16, height: 16),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontFamily: 'Urbanist',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF3F3F3F),
+                ),
+              ),
+            ),
+            if (showArrow)
+              Image.asset(AppImages.rightArrow, width: 16, height: 16),
+          ],
+        ),
+      ),
     );
   }
 }
