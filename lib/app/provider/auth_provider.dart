@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../core/storage/hive_service.dart';
-import '../model/auth/login_response_model.dart';
 import '../model/auth/otp_response_model.dart';
 import '../model/auth/signup_model.dart';
 import '../repo/auth_repo.dart';
@@ -91,6 +90,32 @@ class AuthProvider extends ChangeNotifier {
         return true;
       } else {
         _setError(res.message.isNotEmpty ? res.message : 'Failed to load profile');
+        return false;
+      }
+    } catch (e) {
+      _setError(_parseError(e));
+      return false;
+    }
+  }
+
+  // ─── Update Profile ───────────────────────────────────
+  Future<bool> updateProfile(SignUpRequestModel request) async {
+    _setStatus(AuthStatus.loading);
+    try {
+      final res = await _repo.updateProfile(request);
+      if (res.result) {
+        try {
+          final userId = int.tryParse(HiveService.getUserId() ?? '0') ?? 0;
+          final phone = HiveService.getMobileNo() ?? '';
+          final profileRes = await _repo.getProfile(userId: userId, phone: phone);
+          if (profileRes.result && profileRes.data != null) {
+            await HiveService.saveUserData(profileRes.data!);
+          }
+        } catch (_) {}
+        _setStatus(AuthStatus.success);
+        return true;
+      } else {
+        _setError(res.message.isNotEmpty ? res.message : 'Update failed');
         return false;
       }
     } catch (e) {

@@ -14,7 +14,8 @@
       "Bash(find C:Usersmohnish.kumarDownloadsUrgentHaiApp -type f -name *RideBooking* -o -name *RideType*)",
       "Bash(grep -r \"com\\\\.hurgent\\\\.hai\\\\|hurgent_hai_ios\" D:hurgent_hai_ios --include=*.md --include=*.txt --include=*.swift --include=*.h --include=*.m)",
       "Bash(find C:/Users/mohnish.kumar/Downloads/UrgentHaiApp/app/src/main/java -name *.java -o -name *.kt)",
-      "Bash(grep -E \"\\\\.\\(xml|java|kt\\)$\")"
+      "Bash(grep -E \"\\\\.\\(xml|java|kt\\)$\")",
+      "Bash(grep -E \"\\\\.kt$\")"
     ]
   }
 }

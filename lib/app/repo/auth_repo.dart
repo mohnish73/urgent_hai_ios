@@ -37,4 +37,9 @@ class AuthRepo {
     );
     return LoginResponseModel.fromJson(res.data as Map<String, dynamic>);
   }
+
+  Future<SignUpResponseModel> updateProfile(SignUpRequestModel request) async {
+    final res = await _api.postApi(request.toJson(), AppUrl.updateUserProfile);
+    return SignUpResponseModel.fromJson(res.data as Map<String, dynamic>);
+  }
 }
