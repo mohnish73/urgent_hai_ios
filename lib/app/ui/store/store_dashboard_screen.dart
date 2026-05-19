@@ -40,10 +40,24 @@ class _StoreDashboardScreenState extends State<StoreDashboardScreen> with Single
           tabs: const [Tab(text: 'Shop'), Tab(text: 'My Orders')],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [StoreHomeTab(), OrdersTab()],
-      ),
+      body:
+
+
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(child: Text("Coming soon....",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),))
+
+        ],),
+
+
+      // TabBarView(
+      //   controller: _tabController,
+      //   children: const [StoreHomeTab(), OrdersTab()],
+      // ),
+
+
     );
   }
 }

@@ -40,10 +40,21 @@ class _ParcelDashboardScreenState extends State<ParcelDashboardScreen> with Sing
           tabs: const [Tab(text: 'Send Parcel'), Tab(text: 'Activity')],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [ParcelBookTab(), ParcelActivityTab()],
-      ),
+      body:
+         Column(
+           mainAxisAlignment: MainAxisAlignment.center,
+           crossAxisAlignment: CrossAxisAlignment.center,
+           children: [
+           Center(child: Text("Coming soon....",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),))
+
+         ],),
+
+      // TabBarView(
+      //   controller: _tabController,
+      //   children: const [ParcelBookTab(), ParcelActivityTab()],
+      // ),
+
+
     );
   }
 }

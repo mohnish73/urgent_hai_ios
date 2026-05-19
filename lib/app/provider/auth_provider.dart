@@ -124,6 +124,26 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Delete Account ───────────────────────────────────
+  Future<bool> deleteAccount() async {
+    _setStatus(AuthStatus.loading);
+    try {
+      final mobileNo = HiveService.getMobileNo() ?? '';
+      final res = await _repo.deleteAccount(mobileNo);
+      if (res.result) {
+        await HiveService.clearAll();
+        _setStatus(AuthStatus.success);
+        return true;
+      } else {
+        _setError(res.message.isNotEmpty ? res.message : 'Failed to delete account');
+        return false;
+      }
+    } catch (e) {
+      _setError(_parseError(e));
+      return false;
+    }
+  }
+
   // ─── Resend OTP (re-uses generateOtp) ─────────────────
   Future<bool> resendOtp(String phone) => generateOtp(phone);
 

@@ -42,4 +42,11 @@ class AuthRepo {
     final res = await _api.postApi(request.toJson(), AppUrl.updateUserProfile);
     return SignUpResponseModel.fromJson(res.data as Map<String, dynamic>);
   }
+
+  Future<SignUpResponseModel> deleteAccount(String mobileNo) async {
+    final res = await _api.deleteApiWithToken(
+      '${AppUrl.deleteUserAccount}?MobileNo=$mobileNo',
+    );
+    return SignUpResponseModel.fromJson(res.data as Map<String, dynamic>);
+  }
 }

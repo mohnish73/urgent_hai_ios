@@ -12,6 +12,7 @@ class AppUrl {
   static const String getUserProfile = '${_base}URGH/GetUserProfile';
   static const String registerNewUser = '${_base}URGH/AddRegisterNewUser';
   static const String updateUserProfile = '${_base}URGH/UpdateUserProfile';
+  static const String deleteUserAccount = '${_base}URGH/DeleteUserByMobileNo';
 
   // ─── Address ──────────────────────────────────────────
   static const String getUserAddressList = '${_base}URGH/GetUserAddressList';
