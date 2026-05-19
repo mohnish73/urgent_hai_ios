@@ -40,6 +40,7 @@ import '../ui/store/order_screen.dart';
 import '../ui/store/custom_order_screen.dart';
 
 // Profile
+import '../model/address/address_model.dart';
 import '../ui/profile/about_me_screen.dart';
 import '../ui/profile/add_address_screen.dart';
 import '../ui/profile/notifications_screen.dart';
@@ -178,7 +179,13 @@ class AppRouter {
 
       // ── Profile ──
       GoRoute(path: AppRoutes.aboutMe, builder: (_, __) => const AboutMeScreen()),
-      GoRoute(path: AppRoutes.addAddress, builder: (_, __) => const AddAddressScreen()),
+      GoRoute(
+        path: AppRoutes.addAddress,
+        builder: (_, state) {
+          final extra = state.extra as AddressData?;
+          return AddAddressScreen(addressData: extra);
+        },
+      ),
       GoRoute(path: AppRoutes.notifications, builder: (_, __) => const NotificationsScreen()),
     ],
   );

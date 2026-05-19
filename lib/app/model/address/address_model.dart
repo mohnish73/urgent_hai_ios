@@ -21,6 +21,73 @@ class AddressListResponse {
   }
 }
 
+class AddAddressRequest {
+  final int pkAddressId;
+  final int fkUserId;
+  final String userName;
+  final String role;
+  final String email;
+  final String phoneNo;
+  final String address;
+  final String zipCode;
+  final String city;
+  final String country;
+  final String lat;
+  final String lng;
+  final String apiAddress;
+  final String addressType;
+  final String createdDate;
+
+  const AddAddressRequest({
+    this.pkAddressId = 0,
+    required this.fkUserId,
+    required this.userName,
+    this.role = 'User',
+    required this.email,
+    required this.phoneNo,
+    required this.address,
+    required this.zipCode,
+    required this.city,
+    this.country = 'India',
+    required this.lat,
+    required this.lng,
+    required this.apiAddress,
+    required this.addressType,
+    required this.createdDate,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'PK_AddressId': pkAddressId,
+        'FK_User_Id': fkUserId,
+        'UserName': userName,
+        'Role': role,
+        'Email': email,
+        'PhoneNo': phoneNo,
+        'Address': address,
+        'ZipCode': zipCode,
+        'City': city,
+        'Country': country,
+        'Lat': lat,
+        'Long': lng,
+        'ApiAddress': apiAddress,
+        'AddressType': addressType,
+        'CreatedDate': createdDate,
+      };
+}
+
+class AddAddressResponse {
+  final String message;
+  final bool result;
+
+  AddAddressResponse({required this.message, required this.result});
+
+  factory AddAddressResponse.fromJson(Map<String, dynamic> json) =>
+      AddAddressResponse(
+        message: json['Message'] ?? '',
+        result: json['Result'] ?? false,
+      );
+}
+
 class AddressData {
   final int pkAddressId;
   final int fkUserId;
