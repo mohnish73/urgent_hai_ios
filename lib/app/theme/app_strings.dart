@@ -58,6 +58,42 @@ class AppStrings {
   static const String btnSkip = 'Skip';
   static const String btnContinue = 'Continue';
 
+  // ─── Parcel ───────────────────────────────────────────
+  static const String parcelTabSend = 'Send Parcel';
+  static const String parcelTabActivity = 'Activity';
+  static const String parcelSectionDetails = 'Add Parcel Details';
+  static const String parcelSectionSender = 'Sender Details';
+  static const String parcelSectionReceiver = 'Receiver Details';
+  static const String parcelHintHeight = 'Height (cm)';
+  static const String parcelHintWidth = 'Width (cm)';
+  static const String parcelHintWeight = 'Weight (kg)';
+  static const String parcelHintSenderName = 'Enter sender name';
+  static const String parcelHintSenderMobile = 'Enter sender mobile number';
+  static const String parcelHintReceiverName = 'Enter receiver name';
+  static const String parcelHintReceiverMobile = 'Enter receiver mobile number';
+  static const String parcelYouAreSender = 'You are the sender';
+  static const String parcelYouAreReceiver = 'You are the receiver';
+  static const String parcelAcceptTerms = 'I accept the ';
+  static const String parcelTermsLink = 'Terms & Conditions';
+  static const String parcelConfirmBooking = 'Confirm Booking';
+  static const String parcelErrorHeight = 'Please enter height';
+  static const String parcelErrorWidth = 'Please enter width';
+  static const String parcelErrorWeight = 'Please enter weight';
+  static const String parcelErrorSenderName = 'Please enter sender name';
+  static const String parcelErrorSenderMobile = 'Please enter sender mobile number';
+  static const String parcelErrorSenderMobileInvalid = 'Enter valid sender mobile number';
+  static const String parcelErrorReceiverName = 'Please enter receiver name';
+  static const String parcelErrorReceiverMobile = 'Please enter receiver mobile number';
+  static const String parcelErrorReceiverMobileInvalid = 'Enter valid receiver mobile number';
+  static const String parcelErrorTerms = 'Please accept terms & conditions';
+  static const String parcelScreenTitle = 'Add More Parcel Info';
+  static const String parcelNoActiveTitle = 'No active parcels';
+  static const String parcelNoActiveDesc = 'Book a parcel now';
+  static const String parcelNoPastTitle = 'No past parcels';
+  static const String parcelHistoryEmpty = 'No parcel history yet.';
+  static const String parcelDetailsTitle = 'Parcel Details';
+  static const String parcelCancelBtn = 'Cancel Parcel';
+
   // ─── Home ─────────────────────────────────────────────
   static const String homeWelcomeNote =
       'Your go to partner for all you need \n quickly be it a ride or a grocery!';

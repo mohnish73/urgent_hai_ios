@@ -23,6 +23,7 @@ import '../ui/ride/ride_details_screen.dart';
 import '../ui/ride/locate_me_screen.dart';
 
 // Parcel
+import '../model/parcel/parcel_model.dart';
 import '../ui/parcel/parcel_dashboard_screen.dart';
 import '../ui/parcel/parcel_destination_screen.dart';
 import '../ui/parcel/book_parcel_screen.dart';
@@ -163,9 +164,49 @@ class AppRouter {
       // ── Parcel ──
       GoRoute(path: AppRoutes.parcelDashboard, builder: (_, __) => const ParcelDashboardScreen()),
       GoRoute(path: AppRoutes.parcelDestination, builder: (_, __) => const ParcelDestinationScreen()),
-      GoRoute(path: AppRoutes.bookParcel, builder: (_, __) => const BookParcelScreen()),
-      GoRoute(path: AppRoutes.parcelBookingReq, builder: (_, __) => const ParcelBookingReqScreen()),
-      GoRoute(path: AppRoutes.parcelDetails, builder: (_, __) => const ParcelDetailsScreen()),
+      GoRoute(
+        path: AppRoutes.parcelBookingReq,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return ParcelBookingReqScreen(
+            pickup: extra['pickup'] as String? ?? '',
+            drop: extra['drop'] as String? ?? '',
+            pickupLat: (extra['pickupLat'] as num?)?.toDouble() ?? 0.0,
+            pickupLng: (extra['pickupLng'] as num?)?.toDouble() ?? 0.0,
+            dropLat: (extra['dropLat'] as num?)?.toDouble() ?? 0.0,
+            dropLng: (extra['dropLng'] as num?)?.toDouble() ?? 0.0,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.bookParcel,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return BookParcelScreen(
+            pickup: extra['pickup'] as String? ?? '',
+            drop: extra['drop'] as String? ?? '',
+            pickupLat: (extra['pickupLat'] as num?)?.toDouble() ?? 0.0,
+            pickupLng: (extra['pickupLng'] as num?)?.toDouble() ?? 0.0,
+            dropLat: (extra['dropLat'] as num?)?.toDouble() ?? 0.0,
+            dropLng: (extra['dropLng'] as num?)?.toDouble() ?? 0.0,
+            parcelRequest: extra['parcelRequest'] as ParcelRequestModel? ??
+                ParcelRequestModel(
+                  userId: 0,
+                  userMobileNumber: '',
+                  sender: const ParcelSenderModel(name: '', mobileNumber: '', isSending: false),
+                  receiver: const ParcelReceiverModel(name: '', mobileNumber: '', isReceiving: false),
+                  parcelInfo: const ParcelInfoModel(height: 0, width: 0, weightKg: 0),
+                ),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.parcelDetails,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return ParcelDetailsScreen(bookingId: extra['bookingId'] as int? ?? 0);
+        },
+      ),
 
       // ── Store ──
       GoRoute(path: AppRoutes.storeDashboard, builder: (_, __) => const StoreDashboardScreen()),

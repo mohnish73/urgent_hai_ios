@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/storage/hive_service.dart';
+import '../model/parcel/parcel_model.dart';
 import '../model/ride/book_ride_model.dart';
 import '../model/ride/ride_history_model.dart';
 import '../model/ride/ride_type_model.dart';
@@ -113,6 +114,87 @@ class RideProvider extends ChangeNotifier {
     parcelHistory = ApiResponse.loading();
     notifyListeners();
     parcelHistory = await _repo.fetchParcelHistory(userId);
+    notifyListeners();
+  }
+
+  // ─── Parcel Types (same endpoint as ride types) ───────
+  ApiResponse<List<RideTypeData>> parcelTypes = ApiResponse.idle();
+
+  Future<void> fetchParcelTypes({
+    required String userId,
+    required String mobileNo,
+    required String pickupAddress,
+    required double pickupLat,
+    required double pickupLng,
+    required String dropAddress,
+    required double dropLat,
+    required double dropLng,
+  }) async {
+    parcelTypes = ApiResponse.loading();
+    notifyListeners();
+    parcelTypes = await _repo.fetchRideTypes(
+      userId: userId,
+      mobileNo: mobileNo,
+      pickupAddress: pickupAddress,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
+      dropAddress: dropAddress,
+      dropLat: dropLat,
+      dropLng: dropLng,
+    );
+    notifyListeners();
+  }
+
+  // ─── Book Parcel (same endpoint as bookRide) ──────────
+  ApiResponse<BookRideData> parcelBookingState = ApiResponse.idle();
+  BookRideData? activeParcelBooking;
+
+  Future<BookRideData?> bookParcelRequest(BookRideRequestModel request) async {
+    parcelBookingState = ApiResponse.loading();
+    notifyListeners();
+    parcelBookingState = await _repo.bookRide(request);
+    activeParcelBooking = parcelBookingState.data;
+    notifyListeners();
+    return parcelBookingState.data;
+  }
+
+  // ─── Save Parcel Description ──────────────────────────
+  Future<bool> saveParcelDescription(ParcelRequestModel request) async {
+    final result = await _repo.saveParcelDescription(request);
+    return result.data?.result ?? false;
+  }
+
+  // ─── Cancel Parcel (confirmed booking) ───────────────
+  Future<bool> cancelParcel(int riderBook) async {
+    final userId = HiveService.getUserId();
+    if (userId == null) return false;
+    final result = await _repo.cancelParcel(userId, riderBook);
+    if (result.data == true) {
+      activeParcelBooking = null;
+      parcelBookingState = ApiResponse.idle();
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  // ─── Cancel Parcel (temp / searching) ────────────────
+  Future<bool> cancelParcelTemp(String tempId) async {
+    final userId = HiveService.getUserId();
+    if (userId == null) return false;
+    final result = await _repo.cancelParcelTemp(userId, tempId);
+    if (result.data == true) {
+      activeParcelBooking = null;
+      parcelBookingState = ApiResponse.idle();
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  void resetParcelBooking() {
+    parcelBookingState = ApiResponse.idle();
+    activeParcelBooking = null;
     notifyListeners();
   }
 }

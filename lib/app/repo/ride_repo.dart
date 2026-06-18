@@ -1,4 +1,5 @@
 import '../core/config/app_config.dart';
+import '../model/parcel/parcel_model.dart';
 import '../model/ride/book_ride_model.dart';
 import '../model/ride/ride_history_model.dart';
 import '../model/ride/ride_type_model.dart';
@@ -122,6 +123,38 @@ class RideRepo {
         if (!res.result) throw AppException(res.message.isNotEmpty ? res.message : 'Failed to load parcel history');
         return res.data;
       },
+    );
+  }
+
+  Future<ApiResponse<ParcelSaveResponse>> saveParcelDescription(ParcelRequestModel request) {
+    return ApiHandler.handle(
+      apiCall: () => _api.postApiWithToken(
+        request.toJson(),
+        '${AppConfig.baseUrl}URGH/SaveParcelDescription',
+      ),
+      parser: (json) {
+        final res = ParcelSaveResponse.fromJson(json as Map<String, dynamic>);
+        if (!res.result) throw AppException(res.message.isNotEmpty ? res.message : 'Failed to save parcel details');
+        return res;
+      },
+    );
+  }
+
+  Future<ApiResponse<bool>> cancelParcel(String userId, int riderBook) {
+    return ApiHandler.handle(
+      apiCall: () => _api.getApiWithToken(
+        '${AppConfig.baseUrl}URGH/CancelRideByUser?UserID=$userId&RiderBook=$riderBook',
+      ),
+      parser: (json) => (json as Map<String, dynamic>)['Result'] as bool? ?? false,
+    );
+  }
+
+  Future<ApiResponse<bool>> cancelParcelTemp(String userId, String tempId) {
+    return ApiHandler.handle(
+      apiCall: () => _api.getApiWithToken(
+        '${AppConfig.baseUrl}URGH/CancelRideFromTempFromUser?UserID=$userId&TempRideBookId=$tempId&Status=0',
+      ),
+      parser: (json) => (json as Map<String, dynamic>)['Result'] as bool? ?? false,
     );
   }
 }
