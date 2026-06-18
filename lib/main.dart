@@ -5,6 +5,7 @@ import 'app/core/config/app_config.dart';
 import 'app/provider/address_provider.dart';
 import 'app/provider/auth_provider.dart';
 import 'app/provider/ride_provider.dart';
+import 'app/provider/store_provider.dart';
 import 'app/routes/app_router.dart';
 import 'app/theme/app_theme.dart';
 
@@ -14,6 +15,7 @@ void main() async {
   // Init Hive
   await Hive.initFlutter();
   await Hive.openBox(AppConfig.authBox);
+  await Hive.openBox(AppConfig.storeBox);
 
   runApp(const MyApp());
 }
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => RideProvider()),
         ChangeNotifierProvider(create: (_) => AddressProvider()),
+        ChangeNotifierProvider(create: (_) => StoreProvider()),
       ],
       child: MaterialApp.router(
         title: AppConfig.appName,

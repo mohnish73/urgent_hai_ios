@@ -94,6 +94,39 @@ class AppStrings {
   static const String parcelDetailsTitle = 'Parcel Details';
   static const String parcelCancelBtn = 'Cancel Parcel';
 
+  // ─── Store ────────────────────────────────────────────
+  static const String storeShopByCategory = 'Shop By Category';
+  static const String storeSeeAll = 'See All >';
+  static const String storeFavourites = 'Favourites';
+  static const String storeNoFav = 'No Favourites Added.';
+  static const String storeContinueCart = 'Continue cart';
+  static const String storeCart = 'Cart';
+  static const String storePickFav = 'Pick your favorites';
+  static const String storeSearch = 'Restaurant name, cuisine, or a dish';
+  static const String storeEnterSearch = 'Search products...';
+  static const String storeAddToCart = 'Add to Cart';
+  static const String storeQuantity = 'Quantity';
+  static const String storeCheckout = 'Checkout';
+  static const String storeShoppingCart = 'Shopping Cart';
+  static const String storeEmptyCart = "Your cart is empty.\nAdd items to get started!";
+  static const String storeSubtotal = 'SubTotal';
+  static const String storeShipping = 'Shipping & Other charges';
+  static const String storeTotal = 'Total';
+  static const String storeCustomOrder = 'Custom Order';
+  static const String storeUploadPicture = 'Upload Picture';
+  static const String storeOr = 'OR';
+  static const String storeEnterDesc = 'Enter description...';
+  static const String storeOrder = 'Order';
+  static const String storeTrackOrder = 'Track Order';
+  static const String storeNoProductFound = 'No Product Found.';
+  static const String storeOrderSuccess = 'Order Booked Successfully!';
+  static const String storeVeg = 'Veg';
+  static const String storeNonVeg = 'Non-Veg';
+  static const String storeUploadPhotoHint = 'Tap photo to upload\nor replace';
+  static const String storeEmptyFav = "No favourites yet.\nTap ♥ on a product to save it.";
+  static const String storeFooterTitle = 'UrgentHai';
+  static const String storeFooterTagline = 'Eat. Ride. Deliver.One App Away.';
+
   // ─── Home ─────────────────────────────────────────────
   static const String homeWelcomeNote =
       'Your go to partner for all you need \n quickly be it a ride or a grocery!';

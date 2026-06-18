@@ -31,6 +31,7 @@ import '../ui/parcel/parcel_booking_req_screen.dart';
 import '../ui/parcel/parcel_details_screen.dart';
 
 // Store
+import '../model/store/product_model.dart';
 import '../ui/store/store_dashboard_screen.dart';
 import '../ui/store/categories_screen.dart';
 import '../ui/store/products_screen.dart';
@@ -211,8 +212,25 @@ class AppRouter {
       // ── Store ──
       GoRoute(path: AppRoutes.storeDashboard, builder: (_, __) => const StoreDashboardScreen()),
       GoRoute(path: AppRoutes.categories, builder: (_, __) => const CategoriesScreen()),
-      GoRoute(path: AppRoutes.products, builder: (_, __) => const ProductsScreen()),
-      GoRoute(path: AppRoutes.productDetail, builder: (_, __) => const ProductDetailScreen()),
+      GoRoute(
+        path: AppRoutes.products,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return ProductsScreen(
+            categoryName: extra['categoryName'] as String? ?? '',
+            type: extra['type'] as String? ?? 'Retail',
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.productDetail,
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return ProductDetailScreen(
+            product: extra['product'] as ProductData,
+          );
+        },
+      ),
       GoRoute(path: AppRoutes.cart, builder: (_, __) => const CartScreen()),
       GoRoute(path: AppRoutes.favourites, builder: (_, __) => const FavouritesScreen()),
       GoRoute(path: AppRoutes.order, builder: (_, __) => const OrderScreen()),

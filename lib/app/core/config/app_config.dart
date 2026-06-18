@@ -6,6 +6,7 @@ class AppConfig {
 
   // Hive Boxes
   static const String authBox = 'authBox';
+  static const String storeBox = 'storeBox';
 
   // Google Maps
   static const String googleMapsApiKey = 'AIzaSyCavWzIyvP8p7z9Ld36OMqviQi4i3zFcA0';
